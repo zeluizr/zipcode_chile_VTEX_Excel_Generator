@@ -3,143 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Códigos Postais Chile VTEX - Generador Excel</title>
+    <title>Códigos Postales Chile VTEX - Generador Excel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-      }
-      .container {
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      }
-      h1 {
-        text-align: center;
-        color: #333;
-        margin-bottom: 30px;
-        font-size: 28px;
-      }
-      .generate-btn {
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        color: white;
-        border: none;
-        padding: 15px 30px;
-        font-size: 18px;
-        border-radius: 5px;
-        cursor: pointer;
-        display: block;
-        margin: 20px auto;
-        transition: transform 0.2s;
-      }
-      .generate-btn:hover {
-        transform: translateY(-2px);
-      }
-      .info {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 5px;
-        margin: 20px 0;
-        border-left: 4px solid #667eea;
-      }
-      .preview {
-        margin-top: 30px;
-      }
-      .region-preview {
-        margin: 15px 0;
-        padding: 15px;
-        background: #f8f9fa;
-        border-radius: 5px;
-        border: 1px solid #dee2e6;
-      }
-      .region-title {
-        font-weight: bold;
-        color: #495057;
-        margin-bottom: 10px;
-        font-size: 16px;
-      }
-      .data-sample {
-        font-family: monospace;
-        font-size: 14px;
-        color: #6c757d;
-        margin-left: 10px;
-      }
-      .stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin: 20px 0;
-      }
-      .stat-card {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 5px;
-        text-align: center;
-        border: 1px solid #dee2e6;
-      }
-      .stat-number {
-        font-size: 24px;
-        font-weight: bold;
-        color: #667eea;
-      }
-      .stat-label {
-        color: #6c757d;
-        margin-top: 5px;
-      }
-    </style>
   </head>
-  <body>
-    <div class="container">
-      <h1>📮 Códigos Postais Chile VTEX - Generador Excel</h1>
+  <body
+    class="font-sans max-w-6xl mx-auto p-5 bg-gradient-to-br from-indigo-500 to-purple-600 min-h-screen"
+  >
+    <div class="bg-white p-8 rounded-lg shadow-2xl">
+      <h1 class="text-center text-gray-800 mb-8 text-4xl font-bold">
+        📮 Códigos Postales Chile VTEX - Generador Excel
+      </h1>
 
-      <div class="info">
-        <h3>📊 Información del archivo</h3>
-        <p>
+      <div class="bg-gray-50 p-5 rounded-lg my-5 border-l-4 border-indigo-500">
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">
+          📊 Información del archivo
+        </h3>
+        <p class="text-gray-700 mb-3">
           Este generador creará un archivo Excel con
           <strong>16 pestañas</strong>, una para cada región de Chile. Cada
           pestaña contendrá dos columnas: <strong>Nombre</strong> y
           <strong>Código Postal</strong>.
         </p>
-        <p>
-          <strong>🎯 Especialmente para VTEX:</strong> Estos códigos postais son
-          formatados especificamente para usar na plataforma VTEX, facilitando a
-          configuração de endereços e logística no e-commerce.
+        <p class="text-gray-700">
+          <strong>🎯 Especialmente para VTEX:</strong> Estos códigos postales
+          están formateados específicamente para usar en la plataforma VTEX,
+          facilitando la configuración de direcciones y logística en e-commerce.
         </p>
       </div>
 
-      <div class="info" style="background: #e8f4f8; border-left-color: #0066cc">
-        <h3>🚀 Como usar na VTEX</h3>
-        <p>
-          <strong>1.</strong> Baixe o arquivo Excel gerado<br />
-          <strong>2.</strong> Importe os códigos postais no Master Data da
-          VTEX<br />
-          <strong>3.</strong> Configure as políticas de entrega por região<br />
-          <strong>4.</strong> Teste o checkout com diferentes endereços do Chile
-        </p>
-      </div>
-
-      <div class="stats" id="stats">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-5" id="stats">
         <!-- Las estadísticas se llenarán dinámicamente -->
       </div>
 
-      <button class="generate-btn" onclick="generateExcel()">
-        📄 Generar Arquivo Excel - Códigos Postais VTEX
+      <button
+        class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0 px-8 py-4 text-lg rounded-lg cursor-pointer block mx-auto my-5 transition-transform duration-200 hover:-translate-y-1 shadow-lg"
+        onclick="generateExcel()"
+      >
+        📄 Generar Archivo Excel - Códigos Postales VTEX
       </button>
 
-      <div class="preview" id="preview">
-        <h3>👁️ Vista previa de los datos</h3>
+      <div class="mt-8" id="preview">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+          👁️ Vista previa de los datos
+        </h3>
         <!-- La vista previa se llenará dinámicamente -->
       </div>
     </div>
 
     <script>
-      // Datos de códigos postais das regiões do Chile para VTEX
+      // Datos de códigos postales de las regiones de Chile para VTEX
       const regionesData = {
         "I Región (Tarapacá)": `Camiña___1150000
 Colchane___1160000
@@ -560,19 +473,19 @@ Vitacura___7630000`,
         });
 
         statsContainer.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-number">${totalRegiones}</div>
-                    <div class="stat-label">Regiones</div>
+                <div class="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+                    <div class="text-2xl font-bold text-indigo-600">${totalRegiones}</div>
+                    <div class="text-gray-600 mt-1">Regiones</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">${totalComunas}</div>
-                    <div class="stat-label">Comunas Total</div>
+                <div class="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+                    <div class="text-2xl font-bold text-indigo-600">${totalComunas}</div>
+                    <div class="text-gray-600 mt-1">Comunas Total</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">${Math.round(
+                <div class="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+                    <div class="text-2xl font-bold text-indigo-600">${Math.round(
                       totalComunas / totalRegiones
                     )}</div>
-                    <div class="stat-label">Promedio por Región</div>
+                    <div class="text-gray-600 mt-1">Promedio por Región</div>
                 </div>
             `;
       }
@@ -587,19 +500,19 @@ Vitacura___7630000`,
           const sampleData = processedData.slice(0, 3);
 
           previewHTML += `
-                    <div class="region-preview">
-                        <div class="region-title">${regionName} (${
+                    <div class="my-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="font-bold text-gray-700 mb-3 text-base">${regionName} (${
             processedData.length
           } comunas)</div>
                         ${sampleData
                           .map(
                             (item) =>
-                              `<div class="data-sample">${item.nombre} → ${item.codigo}</div>`
+                              `<div class="font-mono text-sm text-gray-600 ml-3">${item.nombre} → ${item.codigo}</div>`
                           )
                           .join("")}
                         ${
                           processedData.length > 3
-                            ? '<div class="data-sample">...</div>'
+                            ? '<div class="font-mono text-sm text-gray-600 ml-3">...</div>'
                             : ""
                         }
                     </div>
@@ -607,7 +520,8 @@ Vitacura___7630000`,
         });
 
         previewContainer.innerHTML =
-          "<h3>👁️ Vista previa de los datos</h3>" + previewHTML;
+          '<h3 class="text-xl font-semibold text-gray-800 mb-4">👁️ Vista previa de los datos</h3>' +
+          previewHTML;
       }
 
       // Función principal para generar el Excel
@@ -656,7 +570,7 @@ Vitacura___7630000`,
         });
 
         // Generar y descargar el archivo
-        const fileName = `Codigos_Postais_Chile_VTEX_${
+        const fileName = `Codigos_Postales_Chile_VTEX_${
           new Date().toISOString().split("T")[0]
         }.xlsx`;
         XLSX.writeFile(workbook, fileName);
