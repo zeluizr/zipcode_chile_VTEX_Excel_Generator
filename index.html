@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Códigos Postais Chile VTEX - Generador Excel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 28px;
+      }
+      .generate-btn {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: block;
+        margin: 20px auto;
+        transition: transform 0.2s;
+      }
+      .generate-btn:hover {
+        transform: translateY(-2px);
+      }
+      .info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border-left: 4px solid #667eea;
+      }
+      .preview {
+        margin-top: 30px;
+      }
+      .region-preview {
+        margin: 15px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        border: 1px solid #dee2e6;
+      }
+      .region-title {
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+      .data-sample {
+        font-family: monospace;
+        font-size: 14px;
+        color: #6c757d;
+        margin-left: 10px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+      .stat-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+      }
+      .stat-number {
+        font-size: 24px;
+        font-weight: bold;
+        color: #667eea;
+      }
+      .stat-label {
+        color: #6c757d;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📮 Códigos Postais Chile VTEX - Generador Excel</h1>
+
+      <div class="info">
+        <h3>📊 Información del archivo</h3>
+        <p>
+          Este generador creará un archivo Excel con
+          <strong>16 pestañas</strong>, una para cada región de Chile. Cada
+          pestaña contendrá dos columnas: <strong>Nombre</strong> y
+          <strong>Código Postal</strong>.
+        </p>
+        <p>
+          <strong>🎯 Especialmente para VTEX:</strong> Estos códigos postais son
+          formatados especificamente para usar na plataforma VTEX, facilitando a
+          configuração de endereços e logística no e-commerce.
+        </p>
+      </div>
+
+      <div class="info" style="background: #e8f4f8; border-left-color: #0066cc">
+        <h3>🚀 Como usar na VTEX</h3>
+        <p>
+          <strong>1.</strong> Baixe o arquivo Excel gerado<br />
+          <strong>2.</strong> Importe os códigos postais no Master Data da
+          VTEX<br />
+          <strong>3.</strong> Configure as políticas de entrega por região<br />
+          <strong>4.</strong> Teste o checkout com diferentes endereços do Chile
+        </p>
+      </div>
+
+      <div class="stats" id="stats">
+        <!-- Las estadísticas se llenarán dinámicamente -->
+      </div>
+
+      <button class="generate-btn" onclick="generateExcel()">
+        📄 Generar Arquivo Excel - Códigos Postais VTEX
+      </button>
+
+      <div class="preview" id="preview">
+        <h3>👁️ Vista previa de los datos</h3>
+        <!-- La vista previa se llenará dinámicamente -->
+      </div>
+    </div>
+
+    <script>
+      // Datos de códigos postais das regiões do Chile para VTEX
+      const regionesData = {
+        "I Región (Tarapacá)": `Camiña___1150000
+Colchane___1160000
+Huara___1140000
+Iquique___1100000
+Pica___1170000
+Pozo Almonte___1180000
+Alto Hospicio___1130000`,
+
+        "II Región (Antofagasta)": `Antofagasta___1240000
+Calama___1390000
+María Elena___1360000
+Mejillones___1310000
+Ollagüe___1420000
+San Pedro De Atacama___1410000
+Sierra Gorda___1320000
+Taltal___1300000
+Tocopilla___1340000`,
+
+        "III Región (Atacama)": `Alto Del Carmen___1650000
+Caldera___1570000
+Chañaral___1490000
+Copiapó___1530000
+Diego De Almagro___1500000
+Freirina___1630000
+Huasco___1640000
+Tierra Amarilla___1580000
+Vallenar___1610000`,
+
+        "IV Región (Coquimbo)": `Andacollo___1750000
+Caleta Hornos___1780008
+Canela___1960000
+Combarbalá___1890000
+Coquimbo___1780000
+Guanaqueros___1780007
+Illapel___1930000
+La Higuera___1740000
+La Serena___1700000
+Las Tacas___1780002
+Los Vilos___1940000
+Monte Patria___1880000
+Morrillos___1780004
+Ovalle___1840000
+Paihuano___1770000
+Playa Blanca___1780003
+Puerto Velero___1780001
+Punitaqui___1900000
+Río Hurtado___1870000
+Salamanca___1950000
+Tongoy___1780006
+Totoralillo___1780005
+Vicuña___1760000`,
+
+        "V Región (Valparaíso)": `Algarrobo___2710000
+Cabildo___2050000
+Calle Larga___2130000
+Cartagena___2680000
+Casablanca___2480000
+Catemu___2230000
+Concón___2510000
+El Quisco___2700000
+El Tabo___2690000
+Hijuelas___2310000
+Isla De Pascua___2770000
+Juan Fernández___2600000
+La Calera___2290000
+La Cruz___2280000
+La Ligua___2030000
+Limache___2240000
+Llay-Llay___2220000
+Los Andes___2100000
+Nogales___2300000
+Olmué___2330000
+Panquehue___2210000
+Papudo___2070000
+Petorca___2040000
+Puchuncaví___2500000
+Putaendo___2190000
+Quillota___2260000
+Quilpué___2420000
+Quintero___2490000
+Rinconada___2140000
+San Antonio___2660000
+San Esteban___2120000
+San Felipe___2170000
+Santa María___2200000
+Santo Domingo___2720000
+Valparaíso___2340000
+Villa Alemana___2450000
+Viña Del Mar___2520000
+Zapallar___2060000`,
+
+        "VI Región (O'Higgins)": `Chépica___3120000
+Chimbarongo___3090000
+Codegua___2900000
+Coinco___3010000
+Coltauco___3000000
+Doñihue___3020000
+Graneros___2880000
+La Estrella___3250000
+Lago Rapel___3030001
+Las Cabras___3030000
+Litueche___3240000
+Lolol___3140000
+Machalí___2910000
+Malloa___2950000
+Marchigüe___3260000
+Mostazal___2890000
+Nancagua___3110000
+Navidad___3230000
+Olivar___2920000
+Palmilla___3160000
+Paredones___3270000
+Peralillo___3170000
+Peumo___2990000
+Pichidegua___2980000
+Pichilemu___3220000
+Placilla___3100000
+Pumanque___3150000
+Quinta De Tilcoco___2960000
+Rancagua___2820000
+Rengo___2940000
+Requinoa___2930000
+San Fernando___3070000
+San Vicente___2970000
+Santa Cruz___3130000`,
+
+        "VII Región (Maule)": `Cauquenes___3690000
+Chanco___3720000
+Colbún___3610000
+Constitución___3560000
+Curepto___3570000
+Curicó___3340000
+Empedrado___3540000
+Hualañé___3400000
+Licantén___3410000
+Linares___3580000
+Longaví___3620000
+Maule___3530000
+Molina___3380000
+Parral___3630000
+Pelarco___3500000
+Pelluhue___3710000
+Pencahue___3550000
+Rauco___3430000
+Retiro___3640000
+Río Claro___3510000
+Romeral___3370000
+Sagrada Familia___3390000
+San Clemente___3520000
+San Javier___3660000
+San Rafael___3490000
+Talca___3460000
+Teno___3360000
+Vichuquén___3420000
+Villa Alegre___3650000
+Yerbas Buenas___3600000`,
+
+        "VIII Región (Bío Bío)": `Alto Bío Bío___4590000
+Antuco___4490000
+Arauco___4360000
+Cabrero___4470000
+Cañete___4390000
+Chiguayante___4100000
+Concepción___4030000
+Contulmo___4400000
+Coronel___4190000
+Curanilahue___4370000
+Dichato___4160001
+Florida___4170000
+Hualpén___4600000
+Hualqui___4180000
+Laja___4560000
+Lebu___4350000
+Lirquen___4140001
+Los Alamos___4380000
+Los Ángeles___4430000
+Lota___4210000
+Mulchén___4530000
+Nacimiento___4550000
+Negrete___4540000
+Penco___4150000
+Pingueral___4160002
+Quilaco___4520000
+Quilleco___4500000
+Recinto___3880001
+San Pedro De la Paz___4130000
+San Rosendo___4570000
+Santa Bárbara___4510000
+Santa Juana___4230000
+Talcahuano___4260000
+Tirúa___4410000
+Tomé___4160000
+Tucapel___4480000
+Yumbel___4580000`,
+
+        "IX Región (Araucanía)": `Angol___4650000
+Caburga___4920001
+Calafquen___4930001
+Carahue___5010000
+Cholchol___5040000
+Collipulli___4680000
+Corralco___4780002
+Cunco___4890000
+Curacautín___4700000
+Curarrehue___4910000
+Ercilla___4710000
+Freire___4940000
+Galvarino___5030000
+Gorbea___4960000
+Lago Cólico___4930002
+Lago Cólico Norte___4890001
+Lago Cólico Sur___4890002
+Lautaro___4860000
+Licanray___4930001
+Loncoche___4970000
+Lonquimay___4690000
+Los Sauces___4760000
+Lumaco___4740000
+Malalcahuello___4780001
+Melipeuco___4900000
+Nueva Imperial___5020000
+Padre Las Casas___4850000
+Perquenco___4870000
+Pitrufquén___4950000
+Pucón___4920000
+Puerto Saavedra___5000000
+Purén___4750000
+Renaico___4670000
+Temuco___4780000
+Teodoro Schmidt___4990000
+Toltén___4980000
+Traiguén___4730000
+Victoria___4720000
+Vilcún___4880000
+Villarrica___4930000`,
+
+        "X Región (Los Lagos)": `Ancud___5710000
+Calbuco___5570000
+Castro___5700000
+Chaitén___5850000
+Chonchi___5770000
+Cochamó___5560000
+Curaco De Vélez___5740000
+Dalcahue___5730000
+El Islote___5370001
+Ensenada___5550001
+Fresia___5600000
+Frutillar___5620000
+Futaleufú___5870000
+Hualaihué___5860000
+Llanquihue___5610000
+Los Muermos___5590000
+Marina Rupanco___5360001
+Maullín___5580000
+Osorno___5290000
+Palena___5880000
+Puerto Montt___5480000
+Puerto Octay___5370000
+Puerto Varas___5550000
+Puqueldón___5760000
+Purranque___5380000
+Puyehue___5360000
+Queilén___5780000
+Quellón___5790000
+Quemchi___5720000
+Quinchao___5750000
+Río Negro___5390000
+San Juan De la Costa___5400000
+San Pablo___5350000`,
+
+        "XI Región (Aysén)": `Aysén___6000000
+Chile Chico___6050000
+Cisnes___6010000
+Cochrane___6100000
+Coyhaique___5950000
+Guaitecas___6020000
+Lago Verde___5960000
+O'Higgins___6110000
+Río Ibáñez___6060000
+Tortel___6120000`,
+
+        "XII Región (Magallanes)": `Antártica___6360000
+Cabo De Hornos___6350000
+Laguna Blanca___6250000
+Porvenir___6300000
+Primavera___6310000
+Puerto Natales___6160000
+Punta Arenas___6200000
+Río Verde___6240000
+San Gregorio___6260000
+Timaukel___6320000
+Torres Del Paine___6170000`,
+
+        "XIV Región (Los Ríos)": `Coñaripe___5210001
+Corral___5190000
+Futrono___5180000
+La Union___5220000
+Lago Ranco___5250000
+Lanco___5160000
+Los Lagos___5170000
+Mafil___5200000
+Mariquina___5150000
+Paillaco___5230000
+Panguipulli___5210000
+Rio Bueno___5240000
+Valdivia___5090000`,
+
+        "XV Región (Arica y Parinacota)": `Arica___1000000
+Camarones___1040000
+General Lagos___1080000
+Putre___1070000`,
+
+        "XVI Región (Ñuble)": `Bulnes___3930000
+Chillán___3780000
+Chillán Viejo___3820000
+Cobquecura___3990000
+Coelemu___3970000
+Coihueco___3870000
+El Carmen___3900000
+Ninhue___4010000
+Ñiquén___3850000
+Pemuco___3910000
+Pinto___3880000
+Portezuelo___3960000
+Quillón___3940000
+Quirihue___4000000
+Ranquil___3950000
+San Carlos___3840000
+San Fabián___3860000
+San Ignacio___3890000
+San Nicolás___4020000
+Treguaco___3980000
+Yungay___3920000`,
+
+        "Región Metropolitana": `Alhué___9650000
+Buin___9500000
+Calera De Tango___9560000
+Centro de Ski - El Colorado___7690002
+Centro de Ski - Farellones___7690003
+Centro de Ski - La Parva___7690004
+Centro de Ski - Valle Nevado___7690001
+Cerrillos___9200000
+Cerro Navia___9080000
+Chicureo___9350001
+Colina___9340000
+Conchalí___8540000
+Curacaví___9630000
+El Bosque___8010000
+El Monte___9810000
+Estación Central___9160000
+Huechuraba___8580000
+Independencia___8380000
+Isla De Maipo___9790000
+La Cisterna___7970000
+La Florida___8240000
+La Granja___8780000
+La Pintana___8820000
+La Reina___7850000
+Lampa___9380000
+Las Condes___7550000
+Lo Barnechea___7690000
+Lo Barnechea (Excepto Cordillera)___7690100
+Lo Espejo___9120000
+Lo Prado___8980000
+Macul___7810000
+Maipú___9250000
+María Pinto___9620000
+Melipilla___9580000
+Ñuñoa___7750000
+Padre Hurtado___9710000
+Paine___9540000
+Pedro Aguirre Cerda___8460000
+Peñaflor___9750000
+Peñalolén___7910000
+Pirque___9480000
+Providencia___7500000
+Pudahuel___9020000
+Puente Alto___8150000
+Quilicura___8700000
+Quinta Normal___8500000
+Recoleta___8420000
+Renca___8640000
+San Bernardo___8050000
+San Joaquín___8940000
+San José De Maipo___9460000
+San Miguel___8900000
+San Pedro___9660000
+San Ramón___8860000
+Santiago___8320000
+Talagante___9670000
+Tiltil___9420000
+Vitacura___7630000`,
+      };
+
+      // Función para procesar los datos de texto
+      function processRegionData(dataText) {
+        return dataText
+          .split("\n")
+          .filter((line) => line.trim())
+          .map((line) => {
+            const parts = line.split("___");
+            return {
+              nombre: parts[0].trim(),
+              codigo: parts[1] ? parts[1].trim() : "",
+            };
+          });
+      }
+
+      // Función para mostrar estadísticas
+      function showStats() {
+        const statsContainer = document.getElementById("stats");
+        let totalComunas = 0;
+        let totalRegiones = Object.keys(regionesData).length;
+
+        Object.values(regionesData).forEach((data) => {
+          totalComunas += processRegionData(data).length;
+        });
+
+        statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalRegiones}</div>
+                    <div class="stat-label">Regiones</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalComunas}</div>
+                    <div class="stat-label">Comunas Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${Math.round(
+                      totalComunas / totalRegiones
+                    )}</div>
+                    <div class="stat-label">Promedio por Región</div>
+                </div>
+            `;
+      }
+
+      // Función para mostrar vista previa
+      function showPreview() {
+        const previewContainer = document.getElementById("preview");
+        let previewHTML = "";
+
+        Object.entries(regionesData).forEach(([regionName, data]) => {
+          const processedData = processRegionData(data);
+          const sampleData = processedData.slice(0, 3);
+
+          previewHTML += `
+                    <div class="region-preview">
+                        <div class="region-title">${regionName} (${
+            processedData.length
+          } comunas)</div>
+                        ${sampleData
+                          .map(
+                            (item) =>
+                              `<div class="data-sample">${item.nombre} → ${item.codigo}</div>`
+                          )
+                          .join("")}
+                        ${
+                          processedData.length > 3
+                            ? '<div class="data-sample">...</div>'
+                            : ""
+                        }
+                    </div>
+                `;
+        });
+
+        previewContainer.innerHTML =
+          "<h3>👁️ Vista previa de los datos</h3>" + previewHTML;
+      }
+
+      // Función principal para generar el Excel
+      function generateExcel() {
+        const workbook = XLSX.utils.book_new();
+
+        Object.entries(regionesData).forEach(([regionName, data]) => {
+          const processedData = processRegionData(data);
+
+          // Crear los datos para la hoja
+          const worksheetData = [
+            ["Nombre", "Código Postal"], // Headers
+            ...processedData.map((item) => [item.nombre, item.codigo]),
+          ];
+
+          // Crear la hoja de trabajo
+          const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+          // Agregar estilos básicos
+          const range = XLSX.utils.decode_range(worksheet["!ref"]);
+
+          // Estilo para los headers
+          for (let col = range.s.c; col <= range.e.c; col++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+            if (!worksheet[cellAddress]) continue;
+            worksheet[cellAddress].s = {
+              font: { bold: true },
+              fill: { fgColor: { rgb: "CCCCCC" } },
+            };
+          }
+
+          // Ajustar ancho de columnas
+          worksheet["!cols"] = [
+            { wch: 30 }, // Columna Nombre
+            { wch: 15 }, // Columna Código Postal
+          ];
+
+          // Limpiar el nombre de la pestaña (máximo 31 caracteres)
+          let sheetName = regionName.replace(/[\\\/\?\*\[\]:]/g, "");
+          if (sheetName.length > 31) {
+            sheetName = sheetName.substring(0, 31);
+          }
+
+          // Agregar la hoja al libro
+          XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+        });
+
+        // Generar y descargar el archivo
+        const fileName = `Codigos_Postais_Chile_VTEX_${
+          new Date().toISOString().split("T")[0]
+        }.xlsx`;
+        XLSX.writeFile(workbook, fileName);
+      }
+
+      // Inicializar la página
+      window.onload = function () {
+        showStats();
+        showPreview();
+      };
+    </script>
+  </body>
+</html>
