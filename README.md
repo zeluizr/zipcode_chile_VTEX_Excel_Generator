@@ -114,7 +114,7 @@ Este generador está especialmente diseñado para facilitar la configuración de
 
 ### Ideas para contribuir
 
-- [X] Añadir validación de datos
+- [ ] Añadir validación de datos
 - [ ] Mejorar el diseño UI/UX
 - [ ] Añadir más formatos de exportación (CSV, JSON)
 - [ ] Optimizar para dispositivos móviles
